@@ -2,7 +2,7 @@ from django.db import models
 import uuid
 
 
-class Blog(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=2500)
     slug = models.SlugField(default=uuid.uuid4, unique=True)
     content = models.TextField()  # required field
