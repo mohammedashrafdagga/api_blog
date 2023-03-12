@@ -10,4 +10,4 @@ def api_home(request, *args, **kwargs):
     data = {}
     if blog_item:
         data = model_to_dict(blog_item, fields=['title', 'content'])
-    return Response(data, many=True)
+    return Response(data)
