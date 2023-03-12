@@ -33,6 +33,9 @@ INSTALLED_APPS = [
     # connect apps
     'apps.blog',
     'apps.api',
+
+    # library install
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
