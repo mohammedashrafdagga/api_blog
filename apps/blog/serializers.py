@@ -10,7 +10,7 @@ class PostSerializers(serializers.ModelSerializer):
         fields = [
             'title',
             'content',
-            'image',
+            # 'cover',
             # 'slug',
             'create_at',
             'update_at'

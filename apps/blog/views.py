@@ -66,3 +66,34 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
         # user = Token.objects.get(token =token)
         # serializer.save(user = user)
         return super().perform_create(serializer)
+
+# Update and delete
+
+
+class PostUpdateView(generics.UpdateAPIView):
+    '''
+        Post Update View
+        - to Update single item in Post Model item by using slug
+    '''
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'slug'
+
+    def perform_update(self, serializer):
+        # not have anything to play with in here
+        return super().perform_update(serializer)
+
+
+# Destroy
+class PostDestroyView(generics.DestroyAPIView):
+    '''
+        Post Destroy View
+        - to delete single item in Post Model item by using slug item
+    '''
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'slug'
+
+    def perform_destroy(self, instance):
+        # just delete it.
+        return super().perform_destroy(instance)
