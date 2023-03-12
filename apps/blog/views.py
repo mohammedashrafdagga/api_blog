@@ -14,15 +14,15 @@ def api_home(request, *args, **kwargs):
     return Response(data)
 
 
-@api_view(['POST'])
-def post_create(request):
-    serializer = PostSerializers(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        instance = serializer.save()
-        return Response(serializer.data)
+# @api_view(['POST'])
+# def post_create(request):
+#     serializer = PostSerializers(data=request.data)
+#     if serializer.is_valid(raise_exception=True):
+#         instance = serializer.save()
+#         return Response(serializer.data)
 
-    # else
-    return Response({'invalid': 'Data not correct'})
+#     # else
+#     return Response({'invalid': 'Data not correct'})
 
 
 class PostDetailView(generics.RetrieveAPIView):
@@ -34,3 +34,20 @@ class PostDetailView(generics.RetrieveAPIView):
     serializer_class = PostSerializers
     lookup_field = 'slug'
     # Post.objects.get(slug = slug)
+
+
+class PostCreateAPIView(generics.CreateAPIView):
+    '''
+        Post Create API View
+        - to create new instance from post
+    '''
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+
+    def perform_create(self, serializer):
+
+        # or get token send from serializer
+        # token = serializer.validated_data['token']
+        # user = Token.objects.get(token =token)
+        # serializer.save(user = user)
+        return super().perform_create(serializer)
