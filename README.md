@@ -3,8 +3,10 @@
 
 
 Blogger is a web-system.
-Building Using (Django, Django-RestFrameworkAPI).<br>
 ![blogImage](static/redami_image.jpg?raw=true)
+
+Building Using (Django, Django-RestFrameworkAPI).
+
 
 
 ## Features
