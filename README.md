@@ -2,9 +2,11 @@
 
 
 
-Blogger is a web-system.
-![blogImage](static/redami_image.jpg?raw=true)
 
+![blogImage](static/redami_image.jpg?raw=true)
+<br><br>
+Blogger is a web-system.
+<br>
 Building Using (Django, Django-RestFrameworkAPI).
 
 
