@@ -4,6 +4,7 @@ from rest_framework import generics,  permissions, authentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 class PostDetailView(generics.RetrieveAPIView):
@@ -82,10 +83,15 @@ class CommentCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.TokenAuthentication]
 
+    def get_post(self):
+        post_slug = self.request.data.get('post_slug')
+        return get_object_or_404(Post, slug=post_slug)
+
+    def get_author(self):
+        token = self.request.headers.get('Authorization').split(' ')[1]
+        return get_object_or_404(Token, key=token).user
+
     # override the token
     def perform_create(self, serializer):
-        token_key = self.request.headers.get('Authorization').split(' ')[1]
-        user = Token.objects.get(key=token_key).user
-        post = Post.objects.get(slug=self.kwargs.get('post_id'))
-        serializer.save(user=user, post=post)
+        serializer.save(author=self.get_author(), post=self.get_post())
         return Response(status=status.HTTP_201_CREATED)

@@ -2,32 +2,31 @@ from rest_framework import serializers
 from .models import Post, Comment
 
 
-# Comment the showing in Post Serializer
+# another Comment Serializer to Save Comment
 class CommentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = [
-            'content',
-            'create_at'
-        ]
+        fields = ['author', 'content', 'create_at']
 
 
 class PostSerializers(serializers.ModelSerializer):
-    # slug = serializers.SerializerMethodField(read_only=True)
-    comments = CommentPostSerializer(many=True, read_only=True)
-
+    post_comments = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Post
         fields = [
             'title',
             'content',
-            'comments',
-
+            'post_comments'
         ]
+
+    def get_post_comments(self, obj):
+        comments = Comment.objects.filter(post=obj)
+        data = CommentPostSerializer(comments, many=True).data
+        return data
 
 
 # another Comment Serializer to Save Comment
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ['content']
