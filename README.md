@@ -15,7 +15,7 @@ Building Using (Django, Django-RestFrameworkAPI).
 
 - Authentication operations - (login, logout, create new account).
 - Allow to user create post, retrieve, update, delete.
-- Allow to user tocomment into post into system and delete comment.
+- Allow to user to comment into post into system and delete comment.
 - and more features becomming next.
 
 
