@@ -5,7 +5,8 @@ from .views import (
     PostDetailView,
     PostListCreateAPIView,
     PostUpdateView,
-    PostDestroyView
+    PostDestroyView,
+    PostMixinsAPIView
 )
 
 
@@ -18,7 +19,8 @@ urlpatterns = [
     path('', PostListCreateAPIView.as_view(), name='post'),
     path('post-update/<slug:slug>/', PostUpdateView.as_view(), name='post-update'),
     path('post-delete/<slug:slug>/', PostDestroyView.as_view(), name='post-delete'),
-    path('post-detail/<slug:slug>/', PostDetailView.as_view(), name='post-detail'),
+    path('post-detail/<slug:slug>/',
+         PostDetailView.as_view(), name='post-detail'),
     # update and destroy item in post model
 
 ]

@@ -1,6 +1,6 @@
 from .models import Post
 from .serializers import PostSerializers
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 
 # @api_view(['GET'])
@@ -97,3 +97,27 @@ class PostDestroyView(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         # just delete it.
         return super().perform_destroy(instance)
+
+
+# Using Mixins API View
+class PostMixinsAPIView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    generics.GenericAPIView
+):
+    '''
+        Using Mixins With Api View
+    '''
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'slug'
+
+    def get(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        if slug:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
