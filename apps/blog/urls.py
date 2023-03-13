@@ -4,25 +4,27 @@ from .views import (
     # api_home,
     # post_create,
     PostDetailView,
-    PostListCreateAPIView,
+    PostListAPIView,
+    PostCreateAPIView,
     PostUpdateView,
     PostDestroyView,
-    # PostMixinsAPIView
+
     CommentCreateAPIView,
     CommentDestroyAPIView
 )
 
 
 # app name
-app_name = 'blog'
+app_name = 'post'
 
 urlpatterns = [
 
-    path('posts/', PostListCreateAPIView.as_view(), name='post'),
-    path('post-update/<slug:slug>/', PostUpdateView.as_view(), name='post-update'),
-    path('post-delete/<slug:slug>/', PostDestroyView.as_view(), name='post-delete'),
-    path('post-detail/<slug:slug>/', PostDetailView.as_view(), name='post-detail'),
-    path('post/add-comment/',
+    path('posts/', PostListAPIView.as_view(), name='posts'),
+    path('post-create/', PostCreateAPIView.as_view(), name='post-create'),
+    path('post/<slug:slug>/', PostDetailView.as_view(), name='post-detail'),
+    path('post/<slug:slug>/update/', PostUpdateView.as_view(), name='post-update'),
+    path('post/<slug:slug>/delete/', PostDestroyView.as_view(), name='post-delete'),
+    path('post/<slug:slug>/add-comment/',
          CommentCreateAPIView.as_view(), name='post-comment-add'),
     path('post/comment/<int:pk>/delete/',
          CommentDestroyAPIView.as_view(), name='post-comment-delete'),

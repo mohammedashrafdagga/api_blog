@@ -1,33 +1,66 @@
 from rest_framework import serializers
 from .models import Post, Comment
-
-
+from rest_framework.reverse import reverse
 # another Comment Serializer to Save Comment
-class CommentPostSerializer(serializers.ModelSerializer):
+
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    delete_url = serializers.HyperlinkedIdentityField(
+        view_name='post:post-comment-delete',
+        read_only=True)
+
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'content', 'create_at']
+        fields = ['id', 'content', 'create_at', 'delete_url']
 
 
-class PostSerializers(serializers.ModelSerializer):
+class PostSerializers(serializers.HyperlinkedModelSerializer):
+
+    author = serializers.CharField(read_only=True)
     post_comments = serializers.SerializerMethodField(read_only=True)
+    comment_url = serializers.HyperlinkedIdentityField(
+        view_name='post:post-comment-add',
+        lookup_field='slug',
+        read_only=True
+
+    )
+    # for user
+    detail_url = serializers.HyperlinkedIdentityField(
+        view_name='post:post-detail',
+        lookup_field='slug',
+        read_only=True
+
+    )
+
+    edit_url = serializers.HyperlinkedIdentityField(
+        view_name='post:post-update',
+        lookup_field='slug',
+        read_only=True
+    )
+    delete_url = serializers.HyperlinkedIdentityField(
+        view_name='post:post-delete',
+        lookup_field='slug',
+        read_only=True
+    )
+
+    # comment
 
     class Meta:
         model = Post
         fields = [
+            'author',
             'title',
             'content',
-            'post_comments'
+            # 'add_comment_url',
+            'comment_url',
+            'detail_url',
+            'edit_url',
+            'delete_url',
+            'post_comments',
         ]
 
     def get_post_comments(self, obj):
         comments = Comment.objects.filter(post=obj)
-        data = CommentPostSerializer(comments, many=True).data
+        data = CommentSerializer(comments, many=True, context={
+                                 'request': self.context['request']}).data
         return data
-
-
-# another Comment Serializer to Save Comment
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['content']

@@ -8,6 +8,8 @@ User = get_user_model()
 
 
 class Post(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE)
     title = models.CharField(max_length=2500)
     slug = models.SlugField(default=uuid.uuid4, unique=True)
     content = models.TextField()  # required field
