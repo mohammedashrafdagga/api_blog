@@ -5,7 +5,7 @@
 
 ![blogImage](static/redami_image.jpg?raw=true)
 <br><br>
-Blogger is a web-system.
+Blogger is a web-application api.
 <br>
 Building Using (Django, Django-RestFrameworkAPI).
 
