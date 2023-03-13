@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Comment
-from rest_framework.reverse import reverse
+
 # another Comment Serializer to Save Comment
 
 
@@ -16,9 +16,11 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 class PostSerializers(serializers.HyperlinkedModelSerializer):
 
-    author = serializers.CharField(read_only=True)
+    author = serializers.CharField(read_only=True)  # just read only
+    # get all comment related the post
     post_comments = serializers.SerializerMethodField(read_only=True)
-    comment_url = serializers.HyperlinkedIdentityField(
+    # add comment
+    add_comment_url = serializers.HyperlinkedIdentityField(
         view_name='post:post-comment-add',
         lookup_field='slug',
         read_only=True
@@ -51,8 +53,7 @@ class PostSerializers(serializers.HyperlinkedModelSerializer):
             'author',
             'title',
             'content',
-            # 'add_comment_url',
-            'comment_url',
+            'add_comment_url',
             'detail_url',
             'edit_url',
             'delete_url',

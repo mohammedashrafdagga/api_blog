@@ -1,12 +1,10 @@
 from .models import Post, Comment
 from .serializers import PostSerializers, CommentSerializer
-from rest_framework import generics,  permissions, authentication
-from rest_framework.authtoken.models import Token
+from rest_framework import generics,  permissions, authentication, status
 from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
 from .permissions import IsOwner
 from .token import get_user_token
+from django.shortcuts import get_object_or_404
 
 
 class PostListAPIView(generics.ListAPIView):
@@ -50,10 +48,7 @@ class PostUpdateView(generics.UpdateAPIView):
 
 # Destroy
 class PostDestroyView(generics.DestroyAPIView):
-    '''
-        Post Destroy View
-        - to delete single item in Post Model item by using slug item
-    '''
+
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
