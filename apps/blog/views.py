@@ -1,6 +1,9 @@
 from .models import Post
-from .serializers import PostSerializers
-from rest_framework import generics, mixins, permissions, authentication
+from .serializers import PostSerializers, CommentSerializer
+from rest_framework import generics,  permissions, authentication
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class PostDetailView(generics.RetrieveAPIView):
@@ -72,30 +75,17 @@ class PostDestroyView(generics.DestroyAPIView):
         authentication.TokenAuthentication,
     ]
 
-    def perform_destroy(self, instance):
-        # just delete it.
-        return super().perform_destroy(instance)
 
+# for creating comment into post
+class CommentCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
 
-# Using Mixins API View
-class PostMixinsAPIView(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
-    generics.GenericAPIView
-):
-    '''
-        Using Mixins With Api View
-    '''
-    queryset = Post.objects.all()
-    serializer_class = PostSerializers
-    lookup_field = 'slug'
-
-    def get(self, request, *args, **kwargs):
-        slug = kwargs.get('slug')
-        if slug:
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    # override the token
+    def perform_create(self, serializer):
+        token_key = self.request.headers.get('Authorization').split(' ')[1]
+        user = Token.objects.get(key=token_key).user
+        post = Post.objects.get(slug=self.kwargs.get('post_id'))
+        serializer.save(user=user, post=post)
+        return Response(status=status.HTTP_201_CREATED)
