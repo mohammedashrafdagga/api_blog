@@ -1,6 +1,6 @@
 from .models import Post
 from .serializers import PostSerializers
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
 
 
 # @api_view(['GET'])
@@ -31,7 +31,15 @@ class PostDetailView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
-    # Post.objects.get(slug = slug)
+    # permissions and authentication
+    permission_classes = [
+        # That mean can read only if not authentication or Authentication to post thing
+        permissions.IsAuthenticatedOrReadOnly
+    ]
+    authentication_classes = [
+
+        authentication.TokenAuthentication,
+    ]
 
 
 # class PostCreateAPIView(generics.CreateAPIView):
@@ -58,6 +66,13 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     '''
     queryset = Post.objects.all()
     serializer_class = PostSerializers
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly
+    ]
+    authentication_classes = [
+
+        authentication.TokenAuthentication,
+    ]
 
     def perform_create(self, serializer):
 
@@ -78,6 +93,13 @@ class PostUpdateView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly
+    ]
+    authentication_classes = [
+
+        authentication.TokenAuthentication,
+    ]
 
     def perform_update(self, serializer):
         # not have anything to play with in here
@@ -93,6 +115,13 @@ class PostDestroyView(generics.DestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly
+    ]
+    authentication_classes = [
+
+        authentication.TokenAuthentication,
+    ]
 
     def perform_destroy(self, instance):
         # just delete it.

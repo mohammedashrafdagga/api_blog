@@ -1,4 +1,6 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
+
 from .views import (
     # api_home,
     # post_create,
@@ -6,7 +8,7 @@ from .views import (
     PostListCreateAPIView,
     PostUpdateView,
     PostDestroyView,
-    PostMixinsAPIView
+    # PostMixinsAPIView
 )
 
 
@@ -14,6 +16,7 @@ from .views import (
 app_name = 'blog'
 
 urlpatterns = [
+    path('auth/', obtain_auth_token, name='auth'),
     # path('', PostListAPIView.as_view(), name='blog-home'),
     # path('post-create/', post_create, name='post-create'),
     path('', PostListCreateAPIView.as_view(), name='post'),
