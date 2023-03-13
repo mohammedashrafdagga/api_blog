@@ -6,11 +6,12 @@ from .models import Post, Comment
 class CommentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['author', 'content', 'create_at']
+        fields = ['id', 'author', 'content', 'create_at']
 
 
 class PostSerializers(serializers.ModelSerializer):
     post_comments = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Post
         fields = [

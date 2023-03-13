@@ -1,10 +1,12 @@
-from .models import Post
+from .models import Post, Comment
 from .serializers import PostSerializers, CommentSerializer
 from rest_framework import generics,  permissions, authentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from .permissions import IsOwner
+from .token import get_user_token
 
 
 class PostDetailView(generics.RetrieveAPIView):
@@ -15,14 +17,8 @@ class PostDetailView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
-    # permissions and authentication
     permission_classes = [
-        # That mean can read only if not authentication or Authentication to post thing
-        permissions.IsAuthenticatedOrReadOnly
-    ]
-    authentication_classes = [
-
-        authentication.TokenAuthentication,
+        permissions.AllowAny
     ]
 
 
@@ -87,11 +83,21 @@ class CommentCreateAPIView(generics.CreateAPIView):
         post_slug = self.request.data.get('post_slug')
         return get_object_or_404(Post, slug=post_slug)
 
-    def get_author(self):
-        token = self.request.headers.get('Authorization').split(' ')[1]
-        return get_object_or_404(Token, key=token).user
-
-    # override the token
     def perform_create(self, serializer):
-        serializer.save(author=self.get_author(), post=self.get_post())
+        serializer.save(author=get_user_token(
+            self.request), post=self.get_post())
         return Response(status=status.HTTP_201_CREATED)
+
+
+class CommentDestroyAPIView(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+        # Comment ALlow the Owner the Comment delete only
+        IsOwner
+    ]
+    authentication_classes = [
+        authentication.TokenAuthentication
+    ]
+    lookup_field = 'pk'

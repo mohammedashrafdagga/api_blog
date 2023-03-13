@@ -8,7 +8,8 @@ from .views import (
     PostUpdateView,
     PostDestroyView,
     # PostMixinsAPIView
-    CommentCreateAPIView
+    CommentCreateAPIView,
+    CommentDestroyAPIView
 )
 
 
@@ -22,6 +23,8 @@ urlpatterns = [
     path('post-delete/<slug:slug>/', PostDestroyView.as_view(), name='post-delete'),
     path('post-detail/<slug:slug>/', PostDetailView.as_view(), name='post-detail'),
     path('post/add-comment/',
-         CommentCreateAPIView.as_view(), name='post-comment-add')
+         CommentCreateAPIView.as_view(), name='post-comment-add'),
+    path('post/comment/<int:pk>/delete/',
+         CommentDestroyAPIView.as_view(), name='post-comment-delete'),
 
 ]
