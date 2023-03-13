@@ -38,7 +38,8 @@ class PostUpdateView(generics.UpdateAPIView):
     serializer_class = PostSerializers
     lookup_field = 'slug'
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly
+        permissions.IsAuthenticated,
+        IsOwner
     ]
     authentication_classes = [
 
@@ -53,7 +54,8 @@ class PostDestroyView(generics.DestroyAPIView):
     serializer_class = PostSerializers
     lookup_field = 'slug'
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly
+        permissions.IsAuthenticated,
+        IsOwner
     ]
     authentication_classes = [
 
