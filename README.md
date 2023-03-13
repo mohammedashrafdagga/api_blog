@@ -4,7 +4,7 @@
 
 Blogger is a web-system.
 Building Using (Django, Django-RestFrameworkAPI).<br>
-![blogImage](https://github.com/mohammedashrafdagga/api_blog/tree/main/static/redami_image.jpg)
+![blogImage](static/redami_image.jpg?raw=true)
 
 
 ## Features
