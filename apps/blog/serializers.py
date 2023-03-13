@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Comment
 
-# another Comment Serializer to Save Comment
-
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     delete_url = serializers.HyperlinkedIdentityField(
