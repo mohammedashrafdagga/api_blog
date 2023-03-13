@@ -1,48 +1,39 @@
-from .models import Post
-from .serializers import PostSerializers
-from rest_framework import generics, mixins, permissions, authentication
+from .models import Post, Comment
+from .serializers import PostSerializers, CommentSerializer
+from rest_framework import generics,  permissions, authentication, status
+from rest_framework.response import Response
+from .permissions import IsOwner
+from .token import get_user_token
+from django.shortcuts import get_object_or_404
+
+
+class PostListAPIView(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    permission_classes = [permissions.AllowAny]
+
+
+class PostCreateAPIView(generics.CreateAPIView):
+    serializer_class = PostSerializers
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def perform_create(self, serializer):
+        serializer.save(author=get_user_token(self.request))
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class PostDetailView(generics.RetrieveAPIView):
-    '''
-        Post Detail View
-        - to retrieve single item in Post Model item
-    '''
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
-    # permissions and authentication
     permission_classes = [
-        # That mean can read only if not authentication or Authentication to post thing
-        permissions.IsAuthenticatedOrReadOnly
-    ]
-    authentication_classes = [
-
-        authentication.TokenAuthentication,
-    ]
-
-
-class PostListCreateAPIView(generics.ListCreateAPIView):
-    '''
-        Post List & Create API View
-        - to create new instance from post and get all item in post model
-    '''
-    queryset = Post.objects.all()
-    serializer_class = PostSerializers
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly
-    ]
-    authentication_classes = [
-
-        authentication.TokenAuthentication,
+        permissions.AllowAny
     ]
 
 
 class PostUpdateView(generics.UpdateAPIView):
-    '''
-        Post Update View
-        - to Update single item in Post Model item by using slug
-    '''
+
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
@@ -57,10 +48,7 @@ class PostUpdateView(generics.UpdateAPIView):
 
 # Destroy
 class PostDestroyView(generics.DestroyAPIView):
-    '''
-        Post Destroy View
-        - to delete single item in Post Model item by using slug item
-    '''
+
     queryset = Post.objects.all()
     serializer_class = PostSerializers
     lookup_field = 'slug'
@@ -72,30 +60,32 @@ class PostDestroyView(generics.DestroyAPIView):
         authentication.TokenAuthentication,
     ]
 
-    def perform_destroy(self, instance):
-        # just delete it.
-        return super().perform_destroy(instance)
+
+# for creating comment into post
+class CommentCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get_post(self):
+        post_slug = self.kwargs.get('slug')
+        return get_object_or_404(Post, slug=post_slug)
+
+    def perform_create(self, serializer):
+        serializer.save(author=get_user_token(
+            self.request), post=self.get_post())
+        return Response(status=status.HTTP_201_CREATED)
 
 
-# Using Mixins API View
-class PostMixinsAPIView(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
-    generics.GenericAPIView
-):
-    '''
-        Using Mixins With Api View
-    '''
-    queryset = Post.objects.all()
-    serializer_class = PostSerializers
-    lookup_field = 'slug'
-
-    def get(self, request, *args, **kwargs):
-        slug = kwargs.get('slug')
-        if slug:
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+class CommentDestroyAPIView(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+        # Comment ALlow the Owner the Comment delete only
+        IsOwner
+    ]
+    authentication_classes = [
+        authentication.TokenAuthentication
+    ]
+    lookup_field = 'pk'
