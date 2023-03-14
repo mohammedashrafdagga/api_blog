@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from .token import get_user_token
+from .utils import get_user_token
 
 
 class IsOwner(BasePermission):
